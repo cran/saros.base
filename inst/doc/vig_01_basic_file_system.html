@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Basic R, Quarto and file system setup</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+
+
+<script>(() => {
+  function guessOS() {
+    const userAgent = window.navigator.userAgent;
+    if (userAgent.includes("Mac OS")) {
+      return {
+        name: "mac",
+      };
+    } else if (userAgent.includes("Windows")) {
+      return {
+        name: "windows",
+      };
+    } else {
+      return {
+        name: "linux",
+      };
+    }
+  }
+  const os = guessOS();
+
+  // deno-lint-ignore no-window-prefix
+  window.addEventListener("DOMContentLoaded", (_) => {
+    for (const el of Array.from(document.querySelectorAll("kbd"))) {
+      el.classList.add("kbd");
+      if (el.dataset[os.name] !== undefined) {
+        el.innerText = el.dataset[os.name];
+      }
+      if (os.name === "mac") {
+        el.innerText = el.innerText
+          .replaceAll(/command-?/gi, "⌘")
+          .replaceAll(/cmd-?/gi, "⌘")
+          .replaceAll(/shift-?/gi, "⇧")
+          .replaceAll(/ctrl-?/gi, "⌃")
+          .replaceAll(/control-?/gi, "⌃")
+          .replaceAll(/option-?/gi, "⌥");
+      }
+    }
+  });
+})();
+</script>
+<style type="text/css">kbd.kbd {
+}
+</style>
+
+
+<style type="text/css">body {background-color: #fff;margin: 1em auto;max-width: 700px;overflow: visible;padding-left: 2em;padding-right: 2em;font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size: 14px;line-height: 1.35;}table {margin: 1em auto;border-width: 1px;border-color: #DDDDDD;border-style: outset;border-collapse: collapse;}table th {border-width: 2px;padding: 5px;border-style: inset;}table td {border-width: 1px;border-style: inset;line-height: 18px;padding: 5px 5px;}table, table th, table td {border-left-style: none;border-right-style: none;}table thead, table tr.even {background-color: #f7f7f7;}p {margin: 0.5em 0;}blockquote {background-color: #f6f6f6;padding: 0.25em 0.75em;}hr {border-style: solid;border: none;border-top: 1px solid #777;margin: 28px 0;}dl {margin-left: 0;}dl dd {margin-bottom: 13px;margin-left: 13px;}dl dt {font-weight: bold;}ul {margin-top: 0;}ul li {list-style: circle outside;}ul ul {margin-bottom: 0;}pre, code {background-color: #f7f7f7;border-radius: 3px;color: #333;white-space: pre-wrap; }pre {border-radius: 3px;margin: 5px 0px 10px 0px;padding: 10px;}pre:not([class]) {background-color: #f7f7f7;}code {font-family: Consolas, Monaco, 'Courier New', monospace;font-size: 85%;}p > code, li > code {padding: 2px 0px;}div.figure {text-align: center;}img {background-color: #FFFFFF;padding: 2px;border: 1px solid #DDDDDD;border-radius: 3px;border: 1px solid #CCCCCC;margin: 0 5px;}h1 {margin-top: 0;font-size: 35px;line-height: 40px;}h2 {border-bottom: 4px solid #f7f7f7;padding-top: 10px;padding-bottom: 2px;font-size: 145%;}h3 {border-bottom: 2px solid #f7f7f7;padding-top: 10px;font-size: 120%;}h4 {border-bottom: 1px solid #f7f7f7;margin-left: 8px;font-size: 105%;}h5, h6 {border-bottom: 1px solid #ccc;font-size: 105%;}a {color: #0033dd;text-decoration: none;}a:hover {color: #6666ff; }a:visited {color: #800080; }a:visited:hover {color: #BB00BB; }a[href^="http:"] {text-decoration: underline; }a[href^="https:"] {text-decoration: underline; }</style>
+</head>
+
+<body>
+
+
+<header id="title-block-header">
+<h1 class="title">Basic R, Quarto and file system setup</h1>
+
+</header>
+
+
+<div>
+<blockquote>
+<p><strong>Tip</strong></p>
+<p>We recommend updating R, RStudio and Quarto twice a year, though this depends on how many and which advanced features are being pursued.</p>
+</blockquote>
+</div>
+<div>
+<blockquote>
+<p><strong>Noobs only</strong></p>
+<p>The following is for computer novices only. If you are well acquainted with R, Windows Explorer, synchronization of cloud files, etc you can skip this.</p>
+</blockquote>
+</div>
+<h2 id="installing-r-rstudio-quarto-rtools-windows">Installing R, Rstudio, Quarto, Rtools (Windows)</h2>
+<ol>
+<li><p>Your files should be synchronized to your local computer. You cannot work with R directly through files and folders only available in the cloud (e.g. Teams). <a href="https://www.berkshirecc.edu/knowledge/microsoft-office/sync-teams-files.php">See here</a> for synchronizing from a Teams or Sharepoint project to you local computer.</p></li>
+<li><p>Install R, Rstudio and optionally a newest pre-release of Quarto (the latter on own risk, the built-in version of Quarto attached to RStudio is usually sufficient). The easiest way to install these is to first make yourself administrator[^By installing in Program Files rather than AppData, you avoid potential problems if you have non-ASCII characters in your username], then open Windows start menu and type cmd.exe, click “Run as administrator” and press <kbd aria-hidden="true">Enter</kbd><span class="visually-hidden">Enter</span>.</p></li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">winget</span> install Posit.rig</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#winget install Posit.RStudio</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Restart cmd.exe</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#rig install R</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#rig system rtools add</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ex">rig</span> system setup-user-lib</span></code></pre></div>
+</div>
+<p>Restart your computer. Check that RStudio runs as expected.</p>
+<p>P.S. You do not need shortcuts to R on your desktop, you will only be using RStudio.</p>
+<h1 id="configuring-r">Configuring R</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="fu">c</span>(<span class="st">&quot;tidyverse&quot;</span>, <span class="st">&quot;devtools&quot;</span>, <span class="st">&quot;gt&quot;</span>, <span class="st">&quot;ggiraph&quot;</span>, <span class="st">&quot;webshot&quot;</span>, <span class="st">&quot;webshot2&quot;</span>, <span class="st">&quot;saros.base&quot;</span>, <span class="st">&quot;saros&quot;</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>webshot<span class="sc">::</span><span class="fu">install_phantomjs</span>()</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>usethis<span class="sc">::</span><span class="fu">edit_r_environ</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the following in the renviron-file being opened: LC_ALL=&quot;nb.utf8&quot;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Save file and restart RStudio</span></span></code></pre></div>
+</div>
+<h1 id="known-problems-during-installation-or-first-time-use">Known problems during installation or first time use</h1>
+<ul>
+<li><p>If problems occur, always try restarting RStudio before asking for help. Solves a lot of problems - same with your computer in general.</p></li>
+<li><p>When you press Render for a document that contains R code, you may get an error message that R does not exist. It may be because you have installed R in a folder path that contains ÆØÅ, etc. The bug has been reported, but in the meantime you can try to install in the normal Program Files folder.</p></li>
+<li><p>Error: unable to open file [somewhere] for writing [or reading]</p>
+<ul>
+<li>This is most often due to the fact that Microsoft has set a restriction that file paths in Sharepoint cannot exceed 260 characters… Completely idiotic. And the problem is made worse by the fact that many new employees at NIFU get their full name as their username, which means that the characters are used up quickly… Move to a shorter folder path and it will work. Anyway, no persistent problem when putting the chapters together, just frustrating when working on it yourself.</li>
+</ul></li>
+</ul>
+
+
+
+
+
+</body></html>

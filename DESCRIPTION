@@ -1,7 +1,7 @@
 Type: Package
 Package: saros.base
 Title: Base Tools for Semi-Automatic Reporting of Ordinary Surveys
-Version: 0.2.1
+Version: 1.0.0
 Authors@R: c(
     person(given = "Stephan", 
            family = "Daus", 
@@ -26,23 +26,25 @@ URL: https://nifu-no.github.io/saros.base/,
         https://github.com/NIFU-NO/saros.base
 BugReports: https://github.com/NIFU-NO/saros.base/issues
 Depends: R (>= 4.2.0)
-Imports: cli, utils, vctrs, dplyr, tidyr, tidyselect, glue, rlang,
-        stringi, yaml, forcats, fs, zip, rstudioapi, bcrypt
-Suggests: covr, haven, srvyr, readr, qs, writexl, quarto, labelled,
-        testthat (>= 3.0.0), tibble, withr, spelling
+Imports: utils, vctrs, rlang, cli, tidyselect, dplyr, tidyr, glue,
+        stringi, forcats, fs, yaml, zip, rstudioapi, bcrypt
+Suggests: covr, haven, srvyr, readr, qs, purrr, writexl, webshot,
+        usethis, quarto, labelled, testthat (>= 3.0.0), tibble, withr,
+        spelling
 SystemRequirements: None.
 Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
 Language: en-US
+VignetteBuilder: quarto
 Config/Needs/website: rmarkdown
 Config/testthat/parallel: true
 NeedsCompilation: no
-Packaged: 2024-09-17 18:52:14 UTC; py128
+Packaged: 2025-01-10 17:06:58 UTC; py128
 Author: Stephan Daus [aut, cre, cph] (<https://orcid.org/0000-0003-0230-6997>),
   Nordic Institute for The Studies of Innovation, Research and Education
     (NIFU) [fnd],
   Kristiania University College [fnd]
 Repository: CRAN
-Date/Publication: 2024-09-18 13:30:02 UTC
+Date/Publication: 2025-01-10 18:50:02 UTC

@@ -47,7 +47,7 @@
 #'
 #'   Only used if it exists. Multiple authors are separated by semicolon (and optionally with a subsequent space).
 #'
-#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and 0_report.qmd respectively*
+#' @param index_yaml_file,report_yaml_file *Path to YAML-file to insert into index.qmd and report.qmd respectively*
 #'
 #'   `scalar<character>` // *default:* `NULL` (`optional`)
 #'
@@ -61,14 +61,14 @@
 #'
 #' @param index_filename *Index filename*
 #'
-#'   `scalar<character>` // *default:* `"index.qmd"` (`optional`)
+#'   `scalar<character>` // *default:* `"index"` (`optional`)
 #'
 #'   The name of the main index Quarto file used as landing
 #'   page for each report. Will link to a PDF (report.qmd) which collects all chapters.
 #'
 #' @param report_filename *Report filename*
 #'
-#'   `scalar<character>` // *default:* `"0_report.qmd"` (`optional`)
+#'   `scalar<character>` // *default:* `"report"` (`optional`)
 #'
 #'   The name of the main report QMD-file used when compiling a complete report
 #'   collecting all chapters in its folder (except itself).
@@ -76,6 +76,12 @@
 #'   If NULL, will generate a filename based on the report title, prefixed with "0_".
 #'   To turn off, set `pdf=FALSE`.
 #'
+#'
+#' @param report_includes_files *Whether report.qmd includes \{\{< include chapter.qmd >\}\}*
+#'
+#'   `scalar<logical>` // *default:* `FALSE`
+#'
+#'   Useful to have in mesos reports. However, bear in mind that including other qmd files with conflicting YAML-headers might be risky.
 #'
 #' @param chapter_qmd_start_section_filepath,chapter_qmd_end_section_filepath,index_qmd_start_section_filepath,index_qmd_end_section_filepath,report_qmd_start_section_filepath,report_qmd_end_section_filepath, *Path to qmd-bit for start/end of each qmd*
 #'
@@ -168,6 +174,12 @@
 #'   `"qs"` is usually the fastest and most space efficient, but sets package
 #'   dependencies on the report project.
 #'
+#' @param data_filename_prefix *String attached to beginning of data-file and data-object*
+#'
+#'   `scalar<string>` // *default:* `"data_"`
+#'
+#'
+#'
 #' @importFrom rlang !!!
 #'
 #' @return The `path`-argument.
@@ -192,7 +204,7 @@ draft_report <-
            chapter_structure,
            ...,
            path = tempdir(),
-           title = "Report",
+           title = NULL,
            authors = NULL,
            authors_col = "author",
            chapter_yaml_file = NULL,
@@ -202,10 +214,11 @@ draft_report <-
            index_yaml_file = NULL,
            index_qmd_start_section_filepath = NULL,
            index_qmd_end_section_filepath = NULL,
-           report_filename = "0_report",
+           report_filename = "report",
            report_yaml_file = NULL,
            report_qmd_start_section_filepath = NULL,
            report_qmd_end_section_filepath = NULL,
+           report_includes_files = FALSE,
            ignore_heading_for_group = c(
              ".template_name",
              ".variable_type_dep",
@@ -227,12 +240,13 @@ draft_report <-
            serialized_format = c("rds", "qs"), # For attach_chapter_dataset
            max_path_warning_threshold = 260, # Tidy up argument name: max_width_path_warning. Keep here
            # Debugging
+           filename_prefix = "",
+           data_filename_prefix = "data_",
            log_file = NULL) {
     args <- utils::modifyList(
       as.list(environment()),
       rlang::list2(...)
     )
-    timestamp <- proc.time()
 
 
     args <- validate_draft_report_args(params = args)
@@ -261,6 +275,7 @@ draft_report <-
         serialized_format = args$serialized_format
       )
 
+    processed_files <- chapter_filepaths
 
 
 
@@ -273,12 +288,14 @@ draft_report <-
           qmd_start_section_filepath = args$report_qmd_start_section_filepath,
           qmd_end_section_filepath = args$report_qmd_end_section_filepath,
           chapter_structure = args$chapter_structure,
+          include_files = if (isTRUE(args$report_includes_files)) sort(basename(chapter_filepaths)),
           title = args$title,
           authors = all_authors,
           output_formats = NULL,
           output_filename = NULL,
           call = rlang::caller_env()
         )
+      processed_files <- c(processed_files, report_filepath)
     }
 
     index_filepath <-
@@ -292,9 +309,10 @@ draft_report <-
         title = args$title,
         authors = all_authors,
         output_formats = if (!is.null(args$report_yaml_file)) find_yaml_formats(args$report_yaml_file),
-        output_filename = args$report_filename,
+        output_filename = stringi::stri_replace_first_regex(str = args$report_filename, pattern = "^_", replacement = ""),
         call = rlang::caller_env()
       )
+    processed_files <- c(processed_files, index_filepath)
 
 
     validate_path_lengths_on_win(
@@ -303,9 +321,5 @@ draft_report <-
     )
 
 
-    cli::cli_inform(proc.time() - timestamp)
-    if (is_string(args$log_file)) {
-      cat(paste0("Run time: ", proc.time() - timestamp), file = args$log_file)
-    }
-    stringi::stri_replace_all_regex(index_filepath, pattern = "\\\\+", replacement = "/")
+    stringi::stri_replace_all_regex(processed_files, pattern = "\\\\+", replacement = "/")
   }

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Prepare dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1em;  vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+
+
+
+
+<style type="text/css">body {background-color: #fff;margin: 1em auto;max-width: 700px;overflow: visible;padding-left: 2em;padding-right: 2em;font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;font-size: 14px;line-height: 1.35;}table {margin: 1em auto;border-width: 1px;border-color: #DDDDDD;border-style: outset;border-collapse: collapse;}table th {border-width: 2px;padding: 5px;border-style: inset;}table td {border-width: 1px;border-style: inset;line-height: 18px;padding: 5px 5px;}table, table th, table td {border-left-style: none;border-right-style: none;}table thead, table tr.even {background-color: #f7f7f7;}p {margin: 0.5em 0;}blockquote {background-color: #f6f6f6;padding: 0.25em 0.75em;}hr {border-style: solid;border: none;border-top: 1px solid #777;margin: 28px 0;}dl {margin-left: 0;}dl dd {margin-bottom: 13px;margin-left: 13px;}dl dt {font-weight: bold;}ul {margin-top: 0;}ul li {list-style: circle outside;}ul ul {margin-bottom: 0;}pre, code {background-color: #f7f7f7;border-radius: 3px;color: #333;white-space: pre-wrap; }pre {border-radius: 3px;margin: 5px 0px 10px 0px;padding: 10px;}pre:not([class]) {background-color: #f7f7f7;}code {font-family: Consolas, Monaco, 'Courier New', monospace;font-size: 85%;}p > code, li > code {padding: 2px 0px;}div.figure {text-align: center;}img {background-color: #FFFFFF;padding: 2px;border: 1px solid #DDDDDD;border-radius: 3px;border: 1px solid #CCCCCC;margin: 0 5px;}h1 {margin-top: 0;font-size: 35px;line-height: 40px;}h2 {border-bottom: 4px solid #f7f7f7;padding-top: 10px;padding-bottom: 2px;font-size: 145%;}h3 {border-bottom: 2px solid #f7f7f7;padding-top: 10px;font-size: 120%;}h4 {border-bottom: 1px solid #f7f7f7;margin-left: 8px;font-size: 105%;}h5, h6 {border-bottom: 1px solid #ccc;font-size: 105%;}a {color: #0033dd;text-decoration: none;}a:hover {color: #6666ff; }a:visited {color: #800080; }a:visited:hover {color: #BB00BB; }a[href^="http:"] {text-decoration: underline; }a[href^="https:"] {text-decoration: underline; }</style>
+</head>
+
+<body>
+
+
+<header id="title-block-header">
+<h1 class="title">Prepare dataset</h1>
+
+</header>
+
+
+<p>Although these are requirements for effective Saros use, there are also general good recommendations for documenting data. One should therefore implement the checkpoints from day 1, i.e. already when programming the questionnaire, documenting the instruments used, as well as obtaining register data used to draw samples.</p>
+<h1 id="what-variables-do-saros-need">What variables do Saros need?</h1>
+<p>The data set needs the variables stated in the <strong>?@sec-chapter-overview</strong>, and possibly the mesos variable if mesos reports are created. Variables that are not used are ignored, but logged in a txt file (and in the R console) when you run <code>saros.base::draft_report()</code> so that you can check that things went as expected - maybe you entered the wrong variable name.</p>
+<h1 id="sec-variable-name">Variable name</h1>
+<p>The principles of variable names and variable labels aim to allow Saros to automatically handle similar variables together, and different variables separately. They may seem draconian but ensure that confusion is avoided and Saros offer benefits by cleaning the output for you.</p>
+<ul>
+<li><p>R handles variable names with spaces, Nordic letters, distinguishes between small and capital letters, odd characters, etc. and has no limit on the number of characters. BUT, many other programs have such restrictions.</p></li>
+<li><p>Keep variable names to a maximum of 8-10 characters.</p></li>
+<li><p>Use only English (ASCII) lowercase letters, numbers and underscores.</p></li>
+<li><p>Variable names must start with a letter.</p></li>
+<li><p>Try to avoid letters that look the same in upper and lower case.</p>
+<ul>
+<li>See <strong>?@sec-standard-variable-names</strong></li>
+</ul></li>
+<li><p>Optimally, all batteries should share the same prefix in the variable name, which is unique from all other batteries/variables. For example, one can name the variables s_100-s_120 for one battery, g_121-g_129 for another battery, etc. and specify that <code>variable_name_separator = &quot;_&quot;</code>. However, another equally fine approach is to name variables in a self-explanatory</p></li>
+</ul>
+<h1 id="data-types">Data types</h1>
+<p>Saros will eventually contain more control checks of variables, but for now check that the data type is the way you want Saros to handle them.</p>
+<h2 id="categorical-variables">Categorical variables</h2>
+<p>This type of data is particularly important in the social sciences, and needs extra attention in Saros and R.</p>
+<ul>
+<li>When you load data in the formats Stata, SPSS or SAS with <code>haven::read_*</code>, R does not know how to handle the potential possibilities for <em>various types of missing</em> (e.g. not managed, skipped, not reached, illegible writing, etc). In R there is only one type of missing (NA). Categorical variables from Stata/SPSS/SAS data are thus set with a temporary {labelled} data type. It can be tempting to leave them like this as it looks nice and clear when you print out the variables to the console:</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: &#39;dplyr&#39;</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from &#39;package:stats&#39;:
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from &#39;package:base&#39;:
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(labelled)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(saros.base)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ex_survey <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">b_1 =</span> labelled<span class="sc">::</span><span class="fu">to_labelled</span>(b_1)) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">count</span>(b_1) <span class="co"># If your categorical variables look like this, you need to convert them</span></span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  b_1                n
+  &lt;dbl+lbl&gt;      &lt;int&gt;
+1 1 [Not at all]   129
+2 2 [A bit]        143
+3 3 [A lot]         28</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is how they ought to look</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>ex_survey <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">count</span>(b_1)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 2
+  b_1            n
+  &lt;fct&gt;      &lt;int&gt;
+1 Not at all   129
+2 A bit        143
+3 A lot         28</code></pre>
+</div>
+</div>
+<p><strong>But the <code>labelled</code> variable type is not intended to be used more than at the start. It will certainly cause trouble in general in R, and also in Saros.</strong> For example, the apparently fine overview you see above will not be possible to display in tables or in a Quarto document like this.</p>
+<p>Instead, use the factor type in R. One converts all categorical variables in an SPSS/Stata/SAS from the <code>labelled&#39; type to the</code>factor’ type as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally convert all unordered to ordered factors if they are mostly that</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>my_data <span class="ot">&lt;-</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>   ex_survey <span class="sc">|&gt;</span> </span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(<span class="sc">~</span><span class="fu">is.factor</span>(.x)), <span class="sc">~</span><span class="fu">factor</span>(.x, <span class="at">ordered=</span><span class="cn">TRUE</span>)))</span></code></pre></div>
+</div>
+<ul>
+<li><p>Distinguishing between nominal (unordered factor) and ordinal (ordered factor) variables is particularly useful in Saros, as they can have separate color scales or output types, and that some sorting algorithms do not break up ordinal scales.</p></li>
+<li><p>Never create dummy variables for Saros. If in the future Saros should need it for regression, etc, it will be created automatically.</p></li>
+<li><p>Check that the order of all categorical variables is correct. Can be done with the following code. Check the values ​​column.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ex_survey <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">look_for</span>(<span class="st">&quot;^[abdep]_&quot;</span>, <span class="at">details=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> pos variable label                     col_type missing unique_values
+ 4   a_1      Do you consent to the fo~ fct      25      3            
+                                                                      
+ 5   a_2      Do you consent to the fo~ fct      36      3            
+                                                                      
+ 6   a_3      Do you consent to the fo~ fct      28      3            
+                                                                      
+ 7   a_4      Do you consent to the fo~ fct      25      3            
+                                                                      
+ 8   a_5      Do you consent to the fo~ fct      30      3            
+                                                                      
+ 9   a_6      Do you consent to the fo~ fct      26      3            
+                                                                      
+ 10  a_7      Do you consent to the fo~ fct      30      3            
+                                                                      
+ 11  a_8      Do you consent to the fo~ fct      31      3            
+                                                                      
+ 12  a_9      Do you consent to the fo~ fct      31      3            
+                                                                      
+ 13  b_1      How much do you like liv~ fct      0       3            
+                                                                      
+                                                                      
+ 14  b_2      How much do you like liv~ fct      0       3            
+                                                                      
+                                                                      
+ 15  b_3      How much do you like liv~ fct      0       3            
+                                                                      
+                                                                      
+ 18  d_1      Rate your degree of conf~ fct      0       11           
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 19  d_2      Rate your degree of conf~ fct      0       11           
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 20  d_3      Rate your degree of conf~ fct      0       11           
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 21  d_4      Rate your degree of conf~ fct      0       11           
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 22  e_1      How often do you do the ~ fct      0       5            
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 23  e_2      How often do you do the ~ fct      0       5            
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 24  e_3      How often do you do the ~ fct      0       5            
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 25  e_4      How often do you do the ~ fct      0       5            
+                                                                      
+                                                                      
+                                                                      
+                                                                      
+ 26  p_1      To what extent do you ag~ fct      0       4            
+                                                                      
+                                                                      
+                                                                      
+ 27  p_2      To what extent do you ag~ fct      0       4            
+                                                                      
+                                                                      
+                                                                      
+ 28  p_3      To what extent do you ag~ fct      0       4            
+                                                                      
+                                                                      
+                                                                      
+ 29  p_4      To what extent do you ag~ fct      34      5            
+                                                                      
+                                                                      
+                                                                      
+ values                    na_values na_range
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ No                                          
+ Yes                                         
+ Not at all                                  
+ A bit                                       
+ A lot                                       
+ Not at all                                  
+ A bit                                       
+ A lot                                       
+ Not at all                                  
+ A bit                                       
+ A lot                                       
+ 0\nCannot do at all                         
+ 1                                           
+ 2                                           
+ 3                                           
+ 4                                           
+ 5\nModerately can do                        
+ 6                                           
+ 7                                           
+ 8                                           
+ 9                                           
+ 10\nHighly certain can do                   
+ 0\nCannot do at all                         
+ 1                                           
+ 2                                           
+ 3                                           
+ 4                                           
+ 5\nModerately can do                        
+ 6                                           
+ 7                                           
+ 8                                           
+ 9                                           
+ 10\nHighly certain can do                   
+ 0\nCannot do at all                         
+ 1                                           
+ 2                                           
+ 3                                           
+ 4                                           
+ 5\nModerately can do                        
+ 6                                           
+ 7                                           
+ 8                                           
+ 9                                           
+ 10\nHighly certain can do                   
+ 0\nCannot do at all                         
+ 1                                           
+ 2                                           
+ 3                                           
+ 4                                           
+ 5\nModerately can do                        
+ 6                                           
+ 7                                           
+ 8                                           
+ 9                                           
+ 10\nHighly certain can do                   
+ Very rarely                                 
+ Rarely                                      
+ Sometimes                                   
+ Often                                       
+ Very often                                  
+ Very rarely                                 
+ Rarely                                      
+ Sometimes                                   
+ Often                                       
+ Very often                                  
+ Very rarely                                 
+ Rarely                                      
+ Sometimes                                   
+ Often                                       
+ Very often                                  
+ Very rarely                                 
+ Rarely                                      
+ Sometimes                                   
+ Often                                       
+ Very often                                  
+ Strongly disagree                           
+ Somewhat disagree                           
+ Somewhat agree                              
+ Strongly agree                              
+ Strongly disagree                           
+ Somewhat disagree                           
+ Somewhat agree                              
+ Strongly agree                              
+ Strongly disagree                           
+ Somewhat disagree                           
+ Somewhat agree                              
+ Strongly agree                              
+ Strongly disagree                           
+ Somewhat disagree                           
+ Somewhat agree                              
+ Strongly agree                              </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Alternatively</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ex_survey <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>   <span class="fu">select</span>(<span class="fu">where</span>(<span class="sc">~</span><span class="fu">is.factor</span>(.x))) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">map</span>(<span class="sc">~</span><span class="fu">levels</span>(.x))</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$x1_sex
+[1] &quot;Males&quot;   &quot;Females&quot;
+
+$x2_human
+[1] &quot;Robot?&quot;              &quot;Definitely humanoid&quot;
+
+$x3_nationality
+[1] &quot;Andorra&quot;  &quot;Belize&quot;   &quot;Cameroon&quot; &quot;Denmark&quot;  &quot;Eswatini&quot; &quot;Fiji&quot;     &quot;Ghana&quot;   
+
+$a_1
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_2
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_3
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_4
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_5
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_6
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_7
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_8
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$a_9
+[1] &quot;No&quot;  &quot;Yes&quot;
+
+$b_1
+[1] &quot;Not at all&quot; &quot;A bit&quot;      &quot;A lot&quot;     
+
+$b_2
+[1] &quot;Not at all&quot; &quot;A bit&quot;      &quot;A lot&quot;     
+
+$b_3
+[1] &quot;Not at all&quot; &quot;A bit&quot;      &quot;A lot&quot;     
+
+$d_1
+ [1] &quot;0\nCannot do at all&quot;       &quot;1&quot;                        
+ [3] &quot;2&quot;                         &quot;3&quot;                        
+ [5] &quot;4&quot;                         &quot;5\nModerately can do&quot;     
+ [7] &quot;6&quot;                         &quot;7&quot;                        
+ [9] &quot;8&quot;                         &quot;9&quot;                        
+[11] &quot;10\nHighly certain can do&quot;
+
+$d_2
+ [1] &quot;0\nCannot do at all&quot;       &quot;1&quot;                        
+ [3] &quot;2&quot;                         &quot;3&quot;                        
+ [5] &quot;4&quot;                         &quot;5\nModerately can do&quot;     
+ [7] &quot;6&quot;                         &quot;7&quot;                        
+ [9] &quot;8&quot;                         &quot;9&quot;                        
+[11] &quot;10\nHighly certain can do&quot;
+
+$d_3
+ [1] &quot;0\nCannot do at all&quot;       &quot;1&quot;                        
+ [3] &quot;2&quot;                         &quot;3&quot;                        
+ [5] &quot;4&quot;                         &quot;5\nModerately can do&quot;     
+ [7] &quot;6&quot;                         &quot;7&quot;                        
+ [9] &quot;8&quot;                         &quot;9&quot;                        
+[11] &quot;10\nHighly certain can do&quot;
+
+$d_4
+ [1] &quot;0\nCannot do at all&quot;       &quot;1&quot;                        
+ [3] &quot;2&quot;                         &quot;3&quot;                        
+ [5] &quot;4&quot;                         &quot;5\nModerately can do&quot;     
+ [7] &quot;6&quot;                         &quot;7&quot;                        
+ [9] &quot;8&quot;                         &quot;9&quot;                        
+[11] &quot;10\nHighly certain can do&quot;
+
+$e_1
+[1] &quot;Very rarely&quot; &quot;Rarely&quot;      &quot;Sometimes&quot;   &quot;Often&quot;       &quot;Very often&quot; 
+
+$e_2
+[1] &quot;Very rarely&quot; &quot;Rarely&quot;      &quot;Sometimes&quot;   &quot;Often&quot;       &quot;Very often&quot; 
+
+$e_3
+[1] &quot;Very rarely&quot; &quot;Rarely&quot;      &quot;Sometimes&quot;   &quot;Often&quot;       &quot;Very often&quot; 
+
+$e_4
+[1] &quot;Very rarely&quot; &quot;Rarely&quot;      &quot;Sometimes&quot;   &quot;Often&quot;       &quot;Very often&quot; 
+
+$p_1
+[1] &quot;Strongly disagree&quot; &quot;Somewhat disagree&quot; &quot;Somewhat agree&quot;   
+[4] &quot;Strongly agree&quot;   
+
+$p_2
+[1] &quot;Strongly disagree&quot; &quot;Somewhat disagree&quot; &quot;Somewhat agree&quot;   
+[4] &quot;Strongly agree&quot;   
+
+$p_3
+[1] &quot;Strongly disagree&quot; &quot;Somewhat disagree&quot; &quot;Somewhat agree&quot;   
+[4] &quot;Strongly agree&quot;   
+
+$p_4
+[1] &quot;Strongly disagree&quot; &quot;Somewhat disagree&quot; &quot;Somewhat agree&quot;   
+[4] &quot;Strongly agree&quot;   </code></pre>
+</div>
+</div>
+<ul>
+<li>All categorical variables should be of the factor type with all possible response options as its categorical levels (levels). This makes the graphs and tables as correct as possible. See example below to correct this if you receive the data as e.g. <code>character()</code> or <code>integer()</code> (something you should definitely avoid at all costs as it is time-consuming to restore the data).</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>   ex_survey <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">matches</span>(<span class="st">&quot;p_&quot;</span>),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span><span class="fu">factor</span>(.x, <span class="at">levels=</span><span class="fu">c</span>(</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Strongly disagree&quot;</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Somewhat disagree&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Somewhat agree&quot;</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Strongly agree&quot;</span>),</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ordered=</span><span class="cn">TRUE</span>))) <span class="sc">|&gt;</span> <span class="co"># FALSE if nominal</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">count</span>(p_3)</span></code></pre></div>
+</div>
+<p>## Text variables (character, string, open text fields)</p>
+<ul>
+<li><p>Used for open text fields, names, etc. where there are normally more than 20 variants.</p></li>
+<li><p>You are responsible for de-identification/anonymization! Neither Saros nor its developers take responsibility for this. Saros will only display variables that you have explicitly requested to be made available - the rest will always be dropped. But to avoid incorrect use, it may be ok to remove the most personally identifying information - to be on the safe side.</p></li>
+<li><p>Use <code>as.character()</code> to convert e.g. categorical data (factor/ordered) to text. Use the <code>{stringr}</code> package to work with such data.</p></li>
+<li><p>NOT FULLY IMPLEMENTED YET: Saros will issue a warning if a text variable contains fewer than 10 unique values, if all of these have string lengths of fewer than 40 characters, and there are multiple duplicates of one of the values. It will also give a warning if it is possible to convert the text variable to numbers without missing everything. The criteria for these warnings can be adjusted/turned off.</p></li>
+</ul>
+<h3 id="mesos-variable">Mesos variable</h3>
+<ul>
+<li>In order to create mesos reports (institution-specific reports), a variable that identifies the mesos groups (i.e., school name, institution name) must be prepared and cleaned. Due to file path length and username generation, these should have short names and preferably without spaces (University of Manchester =&gt; UoM, Ethon boarding school =&gt; Ethon). Use underscores instead of spaces or special characters. Best of all, stick to ASCII. The names should also be consistent across reports as the institution will get usernames for each unique spelling. “UoM_and_LSE” in one report and “UoM” in another report will result in two different sets of usernames/passwords.</li>
+</ul>
+<h2 id="number-variables">Number variables</h2>
+<ul>
+<li>R allows two types of number variables: integers and real numbers (numeric/double). Saros currently does not differentiate between these two types.</li>
+</ul>
+<h1 id="variable-labels-sec-variable-labels">Variable labels {#sec-variable labels}</h1>
+<p>Variable labels are typically the actual question formulation in a questionnaire, or a definition of how data has been collected.</p>
+<ul>
+<li><p>All variables to be used must have a label, this also applies to e.g. independent variables that you have created yourself. See the <a href="https://CRAN.R-project.org/package=labelled"><code>{labelled}</code></a> package for functions to easily set labels if something is missing.</p></li>
+<li><p>Note that in R, variable labels are not considered to be still valid if you have changed the variable’s content (with e.g. <code>mutate()</code>), and <strong>the labels therefore unfortunately disappear</strong>. However, you can copy them back in afterwards with <code>labelled::copy_labels_from(original_data)</code>.</p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>original_data <span class="ot">&lt;-</span> ex_survey</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>modified_data <span class="ot">&lt;-</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>   original_data <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">mutate</span>(<span class="at">x1_sex =</span> <span class="fu">fct_rev</span>(x1_sex)) <span class="sc">|&gt;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>   <span class="fu">copy_labels_from</span>(<span class="at">from =</span> original_data)</span></code></pre></div>
+</div>
+<ul>
+<li><p>All labels for the variables used must be unique (prefix+suffix in total). <code>saros.base::draft_report()</code> will issue a warning if it detects multiple variables that share exactly identical labels. If e.g. a dependent categorical variable (<code>factor</code> or <code>ordered</code>) and a dependent text variable (open text field, <code>character</code>) have identical labels (which you cannot/do not want to change), you must ask saros to group the output on <code>&quot;variable_type_dep&quot;</code> as well.</p></li>
+<li><p>Labels for variables that are related (batteries) must have a common prefix (prefix and suffix are typically separated by <code>&quot; - &quot;</code>). Matrix questions in Qualtrics, SurveyXact, etc. will almost always sort this out for you. But does one of the questions have an extra space the variables will be treated as if they come from different batteries.</p></li>
+<li><p>The labels should not have double separators (” - “) unless intended. Can create a mess.</p></li>
+<li><p>But more importantly than with variable names, <strong>different batteries must not share the same label prefix</strong>. Do you have a lot of batteries with “To what extent do you agree/disagree with the following statements?” then you will have a problem. It can be solved by being more specific in the claim (“… the following claims about your work situation?”), or by separating the batteries also by <a href="#sec-variable-name" class="quarto-xref">Section 2</a> or data type.</p></li>
+</ul>
+<h1 id="storage-of-data">Storage of data</h1>
+<p>R handles all kinds of data formats, though some are clearly better</p>
+<div class="line-block">Format | Labels | Storage space | Speed ​​| Read/write in Stata? | Read/write in SPSS? | Open Standard | Unicode? |</div>
+<p>|————-|————————|———- —-|————|———————|——— ————|————–|————| | sav (SPSS) | Limitation on length | | | Yes | Yes | No | | | dta (Stata) | Limitation on length | | | Yes | Yes | No | | | Parquet | Good | Very small | Very fast | No | No | Yes | | | qs | Everything is possible | Very small | Very fast | No | No | | | | Excel | No | Bad | Bad | Yes | Yes | No | | | CSV | No | Worst | Worst | Yes | Yes | Yes | Confusing | | | | | | | | | | | | | | | | | | |</p>
+<p>: Advantages and disadvantages of different data formats</p>
+<h1 id="complex-survey-designs">Complex survey designs</h1>
+<p>Is sample weighting, stratification, clustering or similar used? Contact Stephan in good time. Saros is supposed to work on this as well, but has not been tested yet.</p>
+<h1 id="project-specific-data-preparations">Project-specific data preparations</h1>
+<p>Sorry, we don’t have much help here.</p>
+
+
+
+
+
+</body></html>
